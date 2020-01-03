@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <sstream>
 #include <vector>
 #include <set>
 #include <map>
@@ -87,6 +88,7 @@ int main(int argc, char* argv[]) {
   cout << wordMap.size() << " valid words in dictionary" << endl;
   	
   string userInput;
+  string tempInput;
 
   while (true) {
     sort(currentWords.begin(), currentWords.end());
@@ -110,7 +112,10 @@ int main(int argc, char* argv[]) {
     cout << endl << endl;
 
     cout << "Enter command (q=quit f=flip 'a X X X'=add 'r X X X'=remove c=cheat): ";
-    cin >> userInput;
+    getline(cin, tempInput);
+    stringstream ssInput(tempInput);
+    ssInput >> userInput;
+
 
     if (userInput == "q") {
       break;
@@ -127,16 +132,18 @@ int main(int argc, char* argv[]) {
     }
     else if (userInput[0] == 'a' ) {
       string word;
-      cin >> word;
-
-      currentWords.push_back(word);  
+      
+      while (ssInput >> word) {
+        currentWords.push_back(word);  
+      }
     }
     else if (userInput[0] == 'r' ) {
       string word;
-      cin >> word;
 
-      auto p = find(currentWords.begin(), currentWords.end(), word);
-      currentWords.erase(p);
+      while (ssInput >> word) {
+        auto p = find(currentWords.begin(), currentWords.end(), word);
+        currentWords.erase(p);
+      }
     }
     else if (userInput[0] == 'c') {
       pair<vector<string>, vector<vector<string>>> cheatWords = cheat();
