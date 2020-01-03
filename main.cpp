@@ -16,7 +16,7 @@ map<string, set<string>> wordMap;
 vector<string> currentWords;
 
 void cheatWords(size_t pos, bool valid, string soFar, vector<string> build, set<pair<string, vector<string>>> &results) {
-  if (pos >= currentWords.size()) {
+  if (pos >= currentWords.size() || soFar.size() > 35) {
     return;
   }
 
