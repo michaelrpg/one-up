@@ -59,6 +59,12 @@ int main(int argc, char* argv[]) {
 
   vector<string> tiles;
   ifstream tileFile("tileCount.txt");
+  
+  if (!tileFile.good()) {
+    cout << "Couldn't open tileCount.txt" << endl;
+    return 1;
+  }
+
   while (!tileFile.eof()) {
     string t;
     tileFile >> t;
@@ -72,6 +78,11 @@ int main(int argc, char* argv[]) {
   
   ifstream wordListFile;
   wordListFile.open(argv[1]);
+
+  if (!wordListFile.good()) {
+    cout << "Couldn't open dictionary" << endl;
+    return 1;
+  }
 
   while (!wordListFile.eof()) {
     string s;
