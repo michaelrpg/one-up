@@ -121,14 +121,18 @@ int main(int argc, char* argv[]) {
       break;
     }
     else if (userInput[0] == 'f') {
-      int pos = rand() % tiles.size();
-      cout << "Flipped " << tiles[pos] << " from pile" << endl;;
+      if (tiles.size() == 0) {
+      	cout << "OUT OF TILES" << endl;
+      } else {
+        int pos = rand() % tiles.size();
+        cout << "Flipped " << tiles[pos] << " from pile" << endl;;
 
-      currentWords.push_back(tiles[pos]);
+        currentWords.push_back(tiles[pos]);
 
-      tiles.erase(tiles.begin() + pos);
+        tiles.erase(tiles.begin() + pos);
       
-      cout << tiles.size() << " tiles left";
+        cout << tiles.size() << " tiles left";
+      }
     }
     else if (userInput[0] == 'a' ) {
       string word;
@@ -137,6 +141,7 @@ int main(int argc, char* argv[]) {
         currentWords.push_back(word);  
       }
     }
+    // TODO: check if there is nothing to remove
     else if (userInput[0] == 'r' ) {
       string word;
 
