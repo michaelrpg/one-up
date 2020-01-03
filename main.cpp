@@ -56,13 +56,25 @@ int main(int argc, char* argv[]) {
 
   srand(time(nullptr)); // use current time as seed for random generator
 
+  vector<string> tiles;
+  ifstream tileFile("tileCount.txt");
+  while (!tileFile.eof()) {
+    string t;
+    tileFile >> t;
+
+    if (t.size() == 0) {
+      break;
+    }
+
+    tiles.push_back(t);
+  }
+  
   ifstream wordListFile;
   wordListFile.open(argv[1]);
 
   while (!wordListFile.eof()) {
     string s;
     wordListFile >> s;
-  
     if (s.length() >= 3) {
       string originalWord = s;
       sort(s.begin(), s.end());
@@ -97,11 +109,21 @@ int main(int argc, char* argv[]) {
     }
     cout << endl << endl;
 
-    cout << "Enter command (q=quit p=print 'a X'=add 'r X'=remove c=cheat): ";
+    cout << "Enter command (q=quit f=flip 'a X X X'=add 'r X X X'=remove c=cheat): ";
     cin >> userInput;
 
     if (userInput == "q") {
       break;
+    }
+    else if (userInput[0] == 'f') {
+      int pos = rand() % tiles.size();
+      cout << "Flipped " << tiles[pos] << " from pile" << endl;;
+
+      currentWords.push_back(tiles[pos]);
+
+      tiles.erase(tiles.begin() + pos);
+      
+      cout << tiles.size() << " tiles left";
     }
     else if (userInput[0] == 'a' ) {
       string word;
