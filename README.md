@@ -1,7 +1,8 @@
 # About One Up!
-One Up! is a fun tile-based word game in which you form words from tiles, including tiles owned by other players.  
-[Offcial rules](http://www.oneupmanship.com/images/Master%20One%20Up!%20Instructions.pdf)  
-[Offcial tile count](http://www.oneupmanship.com/faq.html)
+One Up! is a fun tile-based word game in which you form words from tiles, including tiles owned by other players.
+
+Offcial rules: <http://www.oneupmanship.com/images/Master%20One%20Up!%20Instructions.pdf>  
+Offcial tile count information: <http://www.oneupmanship.com/faq.html>
 
 # Compile
     g++ -O2 main.cpp
