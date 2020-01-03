@@ -141,13 +141,14 @@ int main(int argc, char* argv[]) {
         currentWords.push_back(word);  
       }
     }
-    // TODO: check if there is nothing to remove
     else if (userInput[0] == 'r' ) {
       string word;
 
       while (ssInput >> word) {
         auto p = find(currentWords.begin(), currentWords.end(), word);
-        currentWords.erase(p);
+	if (p != currentWords.end()) {
+          currentWords.erase(p);
+	}
       }
     }
     else if (userInput[0] == 'c') {
