@@ -8,13 +8,14 @@
 #include <algorithm>
 #include <cstdlib>
 #include <ctime>
+#include <set>
 
 using namespace std;
 
 map<string, set<string>> wordMap;
 vector<string> currentWords;
 
-void cheatWords(int pos, bool valid, string soFar, vector<string> build, vector<pair<string, vector<string>>> &results) {
+void cheatWords(size_t pos, bool valid, string soFar, vector<string> build, set<pair<string, vector<string>>> &results) {
   if (pos >= currentWords.size()) {
     return;
   }
@@ -30,17 +31,17 @@ void cheatWords(int pos, bool valid, string soFar, vector<string> build, vector<
   sort(soFar.begin(), soFar.end());
   if (valid && wordMap[soFar].size() > 0) {
     for (auto w : wordMap[soFar]) {
-      results.push_back(make_pair(w, build));
+      results.insert(make_pair(w, build));
     }
   }
 
   cheatWords(pos + 1, valid, soFar, build, results);
 }
 
-vector<pair<string, vector<string>>> cheat() {
+set<pair<string, vector<string>>> cheat() {
   string soFar = "";
   vector<string> build;
-  vector<pair<string, vector<string>>> results;
+  set<pair<string, vector<string>>> results;
   
   cheatWords(0, false, soFar, build, results);
 
@@ -145,13 +146,11 @@ int main(int argc, char* argv[]) {
       }
     }
     else if (userInput[0] == 'c') {
-      vector<pair<string, vector<string>>> cheatWords = cheat();
+      set<pair<string, vector<string>>> cheatWords = cheat();
       
-      // sort(cheatWords.begin(), cheatWords.end());
-
-      for (int i=0; i < cheatWords.size(); i++) {
-        cout << cheatWords[i].first << ": ";
-        for (auto w : cheatWords[i].second) {
+      for (auto setItem : cheatWords) {
+        cout << setItem.first << ": ";
+        for (auto w : setItem.second) {
           cout << w << " ";      
         }
         cout << endl;
