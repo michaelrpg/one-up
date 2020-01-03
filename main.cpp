@@ -165,9 +165,9 @@ int main(int argc, char* argv[]) {
     else if (userInput[0] == 'c') {
       set<pair<string, vector<string>>> cheatWords = cheat();
       
-      for (auto setItem : cheatWords) {
-        cout << setItem.first << ": ";
-        for (auto w : setItem.second) {
+      for (auto cheatItem : cheatWords) {
+        cout << cheatItem.first << ": ";
+        for (auto w : cheatItem.second) {
           cout << w << " ";      
         }
         cout << endl;
