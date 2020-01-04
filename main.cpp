@@ -29,7 +29,7 @@ void cheatWords(size_t pos, bool valid, string soFar, vector<string> build, set<
   soFar += currentWords[pos];
   build.push_back(currentWords[pos]);
   sort(soFar.begin(), soFar.end());
-  if (valid && wordMap[soFar].size() > 0) {
+  if (valid) {
     for (auto w : wordMap[soFar]) {
       results.insert(make_pair(w, build));
     }
