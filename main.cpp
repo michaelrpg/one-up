@@ -1,21 +1,21 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <sstream>
-#include <vector>
-#include <set>
-#include <map>
 #include <algorithm>
 #include <cstdlib>
 #include <ctime>
+#include <fstream>
+#include <iostream>
+#include <map>
 #include <set>
+#include <sstream>
+#include <string>
+#include <vector>
 
 using namespace std;
 
 map<string, set<string>> wordMap;
 vector<string> currentWords;
 
-void cheatWords(size_t pos, bool valid, string soFar, vector<string> build, set<pair<string, vector<string>>> &results) {
+void cheatWords(size_t pos, bool valid, string soFar, vector<string> build,
+                set<pair<string, vector<string>>> &results) {
   if (pos >= currentWords.size() || soFar.size() > 35) {
     return;
   }
@@ -28,7 +28,6 @@ void cheatWords(size_t pos, bool valid, string soFar, vector<string> build, set<
 
   size_t uppityPos = currentWords[pos].find('?');
   if (uppityPos == string::npos) {
-
     soFar += currentWords[pos];
     build.push_back(currentWords[pos]);
     sort(soFar.begin(), soFar.end());
@@ -60,9 +59,7 @@ void cheatWords(size_t pos, bool valid, string soFar, vector<string> build, set<
       }
 
       cheatWords(pos + 1, valid, soFar, build, results);
-
     }
-
   }
 }
 
@@ -70,24 +67,23 @@ set<pair<string, vector<string>>> cheat() {
   string soFar;
   vector<string> build;
   set<pair<string, vector<string>>> results;
-  
+
   cheatWords(0, false, soFar, build, results);
 
   return results;
 }
 
-
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
   if (argc != 2) {
     cout << "Usage: ./program dictionary.txt" << endl;
     return 1;
   }
 
-  srand(time(nullptr)); // use current time as seed for random generator
+  srand(time(nullptr));  // use current time as seed for random generator
 
   vector<string> tiles;
   ifstream tileFile("tileCount.txt");
-  
+
   if (!tileFile.good()) {
     cout << "Couldn't open tileCount.txt" << endl;
     return 1;
@@ -103,7 +99,7 @@ int main(int argc, char* argv[]) {
 
     tiles.push_back(t);
   }
-  
+
   ifstream wordListFile;
   wordListFile.open(argv[1]);
 
@@ -121,17 +117,17 @@ int main(int argc, char* argv[]) {
 
       wordMap[s].insert(originalWord);
     }
-  } 
-  
+  }
+
   // not correct. just number of valid "combos"
   cout << wordMap.size() << " valid words in dictionary" << endl;
-  	
+
   string userInput;
   string tempInput;
 
   while (true) {
     sort(currentWords.begin(), currentWords.end());
-    
+
     cout << "Letters in pile: ";
 
     for (const auto &l : currentWords) {
@@ -150,63 +146,61 @@ int main(int argc, char* argv[]) {
     }
     cout << endl << endl;
 
-    cout << "Enter command (q=quit f=flip 'a X X X'=add 'r X X X'=remove c=cheat): ";
+    cout << "Enter command (q=quit f=flip 'a X X X'=add 'r X X X'=remove "
+            "c=cheat): ";
     getline(cin, tempInput);
     stringstream ssInput(tempInput);
     ssInput >> userInput;
 
-
     if (userInput == "q") {
       break;
     }
-    
+
     if (userInput[0] == 'f') {
       if (tiles.empty()) {
-      	cout << "OUT OF TILES" << endl;
+        cout << "OUT OF TILES" << endl;
       } else {
         int pos = rand() % tiles.size();
-        cout << "Flipped " << tiles[pos] << " from pile" << endl;;
+        cout << "Flipped " << tiles[pos] << " from pile" << endl;
+        ;
 
         currentWords.push_back(tiles[pos]);
 
         tiles.erase(tiles.begin() + pos);
-      
+
         cout << tiles.size() << " tiles left";
       }
-    }
-    else if (userInput[0] == 'a' ) {
+    } else if (userInput[0] == 'a') {
       string word;
-      
+
       while (ssInput >> word) {
-        currentWords.push_back(word);  
+        currentWords.push_back(word);
       }
-    }
-    else if (userInput[0] == 'r' ) {
+    } else if (userInput[0] == 'r') {
       string word;
 
       while (ssInput >> word) {
         auto p = find(currentWords.begin(), currentWords.end(), word);
-	if (p != currentWords.end()) {
+        if (p != currentWords.end()) {
           currentWords.erase(p);
-	}
+        }
       }
-    }
-    else if (userInput[0] == 'c') {
+    } else if (userInput[0] == 'c') {
       set<pair<string, vector<string>>> cheatWords = cheat();
-      
+
       for (auto cheatItem : cheatWords) {
         cout << cheatItem.first << ": ";
 
         string buildWord;
         for (const auto &w : cheatItem.second) {
-          cout << w << " ";      
+          cout << w << " ";
           buildWord += w;
         }
-        
+
         if (buildWord.find('?') != string::npos) {
           for (char letter : cheatItem.first) {
-            if (count(cheatItem.first.begin(), cheatItem.first.end(), letter) > 
-              count(buildWord.begin(), buildWord.end(), letter)) {
+            if (count(cheatItem.first.begin(), cheatItem.first.end(), letter) >
+                count(buildWord.begin(), buildWord.end(), letter)) {
               cheatItem.first[cheatItem.first.find(letter)] = '?';
               cout << "(" << cheatItem.first << ")";
 
@@ -214,10 +208,9 @@ int main(int argc, char* argv[]) {
             }
           }
         }
-        
+
         cout << endl;
       }
-
     }
 
     cout << endl;
