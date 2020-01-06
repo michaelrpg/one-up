@@ -26,16 +26,44 @@ void cheatWords(size_t pos, bool valid, string soFar, vector<string> build, set<
     valid = true;
   }
 
-  soFar += currentWords[pos];
-  build.push_back(currentWords[pos]);
-  sort(soFar.begin(), soFar.end());
-  if (valid) {
-    for (auto w : wordMap[soFar]) {
-      results.insert(make_pair(w, build));
-    }
-  }
+  int uppityPos = currentWords[pos].find('?');
+  if (uppityPos == string::npos) {
 
-  cheatWords(pos + 1, valid, soFar, build, results);
+    soFar += currentWords[pos];
+    build.push_back(currentWords[pos]);
+    sort(soFar.begin(), soFar.end());
+    if (valid) {
+      for (auto w : wordMap[soFar]) {
+        results.insert(make_pair(w, build));
+      }
+    }
+
+    cheatWords(pos + 1, valid, soFar, build, results);
+  } else {
+    string soFarOriginal = soFar;
+    vector<string> buildOriginal = build;
+
+    for (char letter = 'a'; letter <= 'z'; letter++) {
+      soFar = soFarOriginal;
+      build = buildOriginal;
+
+      string newWord = currentWords[pos];
+      newWord[uppityPos] = letter;
+
+      soFar += newWord;
+      build.push_back(currentWords[pos]);
+      sort(soFar.begin(), soFar.end());
+      if (valid) {
+        for (auto w : wordMap[soFar]) {
+          results.insert(make_pair(w, build));
+        }
+      }
+
+      cheatWords(pos + 1, valid, soFar, build, results);
+
+    }
+
+  }
 }
 
 set<pair<string, vector<string>>> cheat() {
@@ -167,9 +195,25 @@ int main(int argc, char* argv[]) {
       
       for (auto cheatItem : cheatWords) {
         cout << cheatItem.first << ": ";
+
+        string buildWord;
         for (auto w : cheatItem.second) {
           cout << w << " ";      
+          buildWord += w;
         }
+        
+        if (buildWord.find('?') != string::npos) {
+          for (char letter : cheatItem.first) {
+            if (count(cheatItem.first.begin(), cheatItem.first.end(), letter) > 
+              count(buildWord.begin(), buildWord.end(), letter)) {
+              cheatItem.first[cheatItem.first.find(letter)] = '?';
+              cout << "(" << cheatItem.first << ")";
+
+              break;
+            }
+          }
+        }
+        
         cout << endl;
       }
 
