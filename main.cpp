@@ -26,7 +26,7 @@ void cheatWords(size_t pos, bool valid, string soFar, vector<string> build, set<
     valid = true;
   }
 
-  int uppityPos = currentWords[pos].find('?');
+  size_t uppityPos = currentWords[pos].find('?');
   if (uppityPos == string::npos) {
 
     soFar += currentWords[pos];
@@ -67,7 +67,7 @@ void cheatWords(size_t pos, bool valid, string soFar, vector<string> build, set<
 }
 
 set<pair<string, vector<string>>> cheat() {
-  string soFar = "";
+  string soFar;
   vector<string> build;
   set<pair<string, vector<string>>> results;
   
@@ -97,7 +97,7 @@ int main(int argc, char* argv[]) {
     string t;
     tileFile >> t;
 
-    if (t.size() == 0) {
+    if (t.empty()) {
       break;
     }
 
@@ -134,7 +134,7 @@ int main(int argc, char* argv[]) {
     
     cout << "Letters in pile: ";
 
-    for (auto l : currentWords) {
+    for (const auto &l : currentWords) {
       if (l.size() == 1) {
         cout << l << " ";
       }
@@ -143,7 +143,7 @@ int main(int argc, char* argv[]) {
 
     cout << "Current words: ";
 
-    for (auto w : currentWords) {
+    for (const auto &w : currentWords) {
       if (w.size() > 1) {
         cout << w << " ";
       }
@@ -159,8 +159,9 @@ int main(int argc, char* argv[]) {
     if (userInput == "q") {
       break;
     }
-    else if (userInput[0] == 'f') {
-      if (tiles.size() == 0) {
+    
+    if (userInput[0] == 'f') {
+      if (tiles.empty()) {
       	cout << "OUT OF TILES" << endl;
       } else {
         int pos = rand() % tiles.size();
@@ -197,7 +198,7 @@ int main(int argc, char* argv[]) {
         cout << cheatItem.first << ": ";
 
         string buildWord;
-        for (auto w : cheatItem.second) {
+        for (const auto &w : cheatItem.second) {
           cout << w << " ";      
           buildWord += w;
         }
