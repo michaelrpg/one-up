@@ -11,12 +11,13 @@
 
 using namespace std;
 
+map<string, set<string>> memo;
 map<string, set<string>> wordMap;
 vector<string> currentWords;
 
 void cheatWords(size_t pos, bool valid, string soFar, vector<string> build,
                 set<pair<string, vector<string>>> &results) {
-  if (pos >= currentWords.size() || soFar.size() > 35) {
+  if (pos >= currentWords.size()) {
     return;
   }
 
@@ -25,6 +26,8 @@ void cheatWords(size_t pos, bool valid, string soFar, vector<string> build,
   if (currentWords[pos].size() == 1) {
     valid = true;
   }
+
+  string oldSoFar = soFar;
 
   size_t uppityPos = currentWords[pos].find('?');
   if (uppityPos == string::npos) {
@@ -37,7 +40,26 @@ void cheatWords(size_t pos, bool valid, string soFar, vector<string> build,
       }
     }
 
-    cheatWords(pos + 1, valid, soFar, build, results);
+    if (memo.count(soFar) == 0) {
+      for (const string &w : memo[oldSoFar]) {
+        bool valid = true;
+        for (const char &l : soFar) {
+          if (count(soFar.begin(), soFar.end(), l) >
+              count(w.begin(), w.end(), l)) {
+            valid = false;
+            break;
+          }
+        }
+
+        if (valid) {
+          memo[soFar].insert(w);
+        }
+      }
+    }
+
+    if (!memo[soFar].empty()) {
+      cheatWords(pos + 1, valid, soFar, build, results);
+    }
   } else {
     string soFarOriginal = soFar;
     vector<string> buildOriginal = build;
@@ -58,7 +80,26 @@ void cheatWords(size_t pos, bool valid, string soFar, vector<string> build,
         }
       }
 
-      cheatWords(pos + 1, valid, soFar, build, results);
+      if (memo.count(soFar) == 0) {
+        for (const string &w : memo[oldSoFar]) {
+          bool valid = true;
+          for (const char &l : soFar) {
+            if (count(soFar.begin(), soFar.end(), l) >
+                count(w.begin(), w.end(), l)) {
+              valid = false;
+              break;
+            }
+          }
+
+          if (valid) {
+            memo[soFar].insert(w);
+          }
+        }
+      }
+
+      if (!memo[soFar].empty()) {
+        cheatWords(pos + 1, valid, soFar, build, results);
+      }
     }
   }
 }
@@ -115,6 +156,7 @@ int main(int argc, char *argv[]) {
       string originalWord = s;
       sort(s.begin(), s.end());
 
+      memo[""].insert(s);
       wordMap[s].insert(originalWord);
     }
   }
