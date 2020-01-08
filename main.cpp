@@ -7,12 +7,12 @@
 #include <set>
 #include <sstream>
 #include <string>
+#include <unordered_map>
 #include <vector>
-
 using namespace std;
 
-map<string, set<string>> memo;
-map<string, set<string>> wordMap;
+unordered_map<string, set<string>> memo;
+unordered_map<string, set<string>> wordMap;
 vector<string> currentWords;
 
 void cheatWords(size_t pos, bool valid, string soFar, vector<string> build,
