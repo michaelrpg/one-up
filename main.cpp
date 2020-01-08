@@ -43,9 +43,25 @@ void cheatWords(size_t pos, bool valid, string soFar, vector<string> build,
     if (memo.count(soFar) == 0) {
       for (const string &w : memo[oldSoFar]) {
         bool valid = true;
-        for (const char &l : soFar) {
-          if (count(soFar.begin(), soFar.end(), l) >
-              count(w.begin(), w.end(), l)) {
+        size_t wPos = 0;
+        size_t soFarPos = 0;
+
+        while (true) {
+          if (soFarPos >= soFar.size()) {
+            break;
+          }
+
+          if (wPos >= w.size()) {
+            valid = false;
+            break;
+          }
+
+          if (soFar[soFarPos] == w[wPos]) {
+            wPos++;
+            soFarPos++;
+          } else if (w[wPos] < soFar[soFarPos]) {
+            wPos++;
+          } else {
             valid = false;
             break;
           }
@@ -83,9 +99,25 @@ void cheatWords(size_t pos, bool valid, string soFar, vector<string> build,
       if (memo.count(soFar) == 0) {
         for (const string &w : memo[oldSoFar]) {
           bool valid = true;
-          for (const char &l : soFar) {
-            if (count(soFar.begin(), soFar.end(), l) >
-                count(w.begin(), w.end(), l)) {
+          size_t wPos = 0;
+          size_t soFarPos = 0;
+
+          while (true) {
+            if (soFarPos >= soFar.size()) {
+              break;
+            }
+
+            if (wPos >= w.size()) {
+              valid = false;
+              break;
+            }
+
+            if (soFar[soFarPos] == w[wPos]) {
+              wPos++;
+              soFarPos++;
+            } else if (w[wPos] < soFar[soFarPos]) {
+              wPos++;
+            } else {
               valid = false;
               break;
             }
