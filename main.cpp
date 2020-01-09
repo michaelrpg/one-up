@@ -1,227 +1,54 @@
 #include <algorithm>
-#include <cstdlib>
-#include <ctime>
-#include <fstream>
 #include <iostream>
 #include <set>
 #include <sstream>
 #include <string>
-#include <unordered_map>
 #include <vector>
 
 #include "one_up.h"
 
-using namespace std;
-
-void cheatWords(size_t pos, bool valid, string soFar, vector<string> build,
-                set<pair<string, vector<string>>> &results) {
-  if (pos >= currentWords.size()) {
-    return;
-  }
-
-  cheatWords(pos + 1, valid, soFar, build, results);
-
-  if (currentWords[pos].size() == 1) {
-    valid = true;
-  }
-
-  string oldSoFar = soFar;
-
-  size_t uppityPos = currentWords[pos].find('?');
-  if (uppityPos == string::npos) {
-    soFar += currentWords[pos];
-    build.push_back(currentWords[pos]);
-    sort(soFar.begin(), soFar.end());
-    if (valid) {
-      for (auto w : wordMap[soFar]) {
-        results.insert(make_pair(w, build));
-      }
-    }
-
-    if (memo.count(soFar) == 0) {
-      for (const string &w : memo[oldSoFar]) {
-        bool valid = true;
-        size_t wPos = 0;
-        size_t soFarPos = 0;
-
-        while (true) {
-          if (soFarPos >= soFar.size()) {
-            break;
-          }
-
-          if (wPos >= w.size()) {
-            valid = false;
-            break;
-          }
-
-          if (soFar[soFarPos] == w[wPos]) {
-            wPos++;
-            soFarPos++;
-          } else if (w[wPos] < soFar[soFarPos]) {
-            wPos++;
-          } else {
-            valid = false;
-            break;
-          }
-        }
-
-        if (valid) {
-          memo[soFar].insert(w);
-        }
-      }
-    }
-
-    if (!memo[soFar].empty()) {
-      cheatWords(pos + 1, valid, soFar, build, results);
-    }
-  } else {
-    string soFarOriginal = soFar;
-    vector<string> buildOriginal = build;
-
-    for (char letter = 'a'; letter <= 'z'; letter++) {
-      soFar = soFarOriginal;
-      build = buildOriginal;
-
-      string newWord = currentWords[pos];
-      newWord[uppityPos] = letter;
-
-      soFar += newWord;
-      build.push_back(currentWords[pos]);
-      sort(soFar.begin(), soFar.end());
-      if (valid) {
-        for (auto w : wordMap[soFar]) {
-          results.insert(make_pair(w, build));
-        }
-      }
-
-      if (memo.count(soFar) == 0) {
-        for (const string &w : memo[oldSoFar]) {
-          bool valid = true;
-          size_t wPos = 0;
-          size_t soFarPos = 0;
-
-          while (true) {
-            if (soFarPos >= soFar.size()) {
-              break;
-            }
-
-            if (wPos >= w.size()) {
-              valid = false;
-              break;
-            }
-
-            if (soFar[soFarPos] == w[wPos]) {
-              wPos++;
-              soFarPos++;
-            } else if (w[wPos] < soFar[soFarPos]) {
-              wPos++;
-            } else {
-              valid = false;
-              break;
-            }
-          }
-
-          if (valid) {
-            memo[soFar].insert(w);
-          }
-        }
-      }
-
-      if (!memo[soFar].empty()) {
-        cheatWords(pos + 1, valid, soFar, build, results);
-      }
-    }
-  }
-}
-
-set<pair<string, vector<string>>> cheat() {
-  string soFar;
-  vector<string> build;
-  set<pair<string, vector<string>>> results;
-
-  cheatWords(0, false, soFar, build, results);
-
-  return results;
-}
-
 int main(int argc, char *argv[]) {
   if (argc != 2) {
-    cout << "Usage: ./program dictionary.txt" << endl;
+    std::cout << "Usage: ./program dictionary.txt" << std::endl;
     return 1;
   }
 
-  srand(time(nullptr));  // use current time as seed for random generator
+  OneUp oneUp;
 
-  vector<string> tiles;
-  ifstream tileFile("tileCount.txt");
-
-  if (!tileFile.good()) {
-    cout << "Couldn't open tileCount.txt" << endl;
+  if (!oneUp.loadTiles("tileCount.txt")) {
+    std::cout << "Couldn't open tileCount.txt" << std::endl;
     return 1;
   }
 
-  while (!tileFile.eof()) {
-    string t;
-    tileFile >> t;
-
-    if (t.empty()) {
-      break;
-    }
-
-    tiles.push_back(t);
-  }
-
-  ifstream wordListFile;
-  wordListFile.open(argv[1]);
-
-  if (!wordListFile.good()) {
-    cout << "Couldn't open dictionary" << endl;
+  if (!oneUp.loadDictionary(argv[1])) {
+    std::cout << "Couldn't open dictionary" << std::endl;
     return 1;
   }
 
-  while (!wordListFile.eof()) {
-    string s;
-    wordListFile >> s;
-    if (s.length() >= 3) {
-      string originalWord = s;
-      sort(s.begin(), s.end());
+  std::cout << oneUp.dictionarySize() << " combinations in dictionary"
+            << std::endl;
 
-      memo[""].insert(s);
-      wordMap[s].insert(originalWord);
-    }
-  }
-
-  // not correct. just number of valid "combos"
-  cout << wordMap.size() << " valid words in dictionary" << endl;
-
-  string userInput;
-  string tempInput;
+  std::string userInput;
+  std::string tempInput;
 
   while (true) {
-    sort(currentWords.begin(), currentWords.end());
-
-    cout << "Letters in pile: ";
-
-    for (const auto &l : currentWords) {
-      if (l.size() == 1) {
-        cout << l << " ";
-      }
+    std::cout << std::endl << "Letters in pile: ";
+    for (const char &l : oneUp.getTiles()) {
+      std::cout << l << " ";
     }
-    cout << endl;
+    std::cout << std::endl;
 
-    cout << "Current words: ";
-
-    for (const auto &w : currentWords) {
-      if (w.size() > 1) {
-        cout << w << " ";
-      }
+    std::cout << "Current words: ";
+    for (const std::string &w : oneUp.getWords()) {
+      std::cout << w << " ";
     }
-    cout << endl << endl;
+    std::cout << std::endl << std::endl;
 
-    cout << "Enter command (q=quit f=flip 'a X X X'=add 'r X X X'=remove "
-            "c=cheat): ";
-    getline(cin, tempInput);
-    stringstream ssInput(tempInput);
+    std::cout << "Enter command (q=quit f=flip 'a X X X'=add 'r X X X'=remove "
+              << "c=cheat): ";
+
+    std::getline(std::cin, tempInput);
+    std::stringstream ssInput(tempInput);
     ssInput >> userInput;
 
     if (userInput == "q") {
@@ -229,63 +56,56 @@ int main(int argc, char *argv[]) {
     }
 
     if (userInput[0] == 'f') {
-      if (tiles.empty()) {
-        cout << "OUT OF TILES" << endl;
+      char tile = oneUp.flipTile();
+
+      if (tile == '\0') {
+        std::cout << "OUT OF TILES" << std::endl;
       } else {
-        int pos = rand() % tiles.size();
-        cout << "Flipped " << tiles[pos] << " from pile" << endl;
-        ;
-
-        currentWords.push_back(tiles[pos]);
-
-        tiles.erase(tiles.begin() + pos);
-
-        cout << tiles.size() << " tiles left";
+        std::cout << "Flipped tile " << tile << " from pile" << std::endl;
+        std::cout << oneUp.tilesRemaining() << " tiles left";
       }
     } else if (userInput[0] == 'a') {
-      string word;
+      std::string word;
 
       while (ssInput >> word) {
-        currentWords.push_back(word);
+        oneUp.addWord(word);
       }
     } else if (userInput[0] == 'r') {
-      string word;
+      std::string word;
 
       while (ssInput >> word) {
-        auto p = find(currentWords.begin(), currentWords.end(), word);
-        if (p != currentWords.end()) {
-          currentWords.erase(p);
-        }
+        oneUp.removeWord(word);
       }
     } else if (userInput[0] == 'c') {
-      set<pair<string, vector<string>>> cheatWords = cheat();
+      std::set<std::pair<std::string, std::vector<std::string>>> cheatWords =
+          oneUp.getCheatWords();
 
       for (auto cheatItem : cheatWords) {
-        cout << cheatItem.first << ": ";
+        std::cout << cheatItem.first << ": ";
 
-        string buildWord;
+        std::string buildWord;
         for (const auto &w : cheatItem.second) {
-          cout << w << " ";
+          std::cout << w << " ";
           buildWord += w;
         }
 
-        if (buildWord.find('?') != string::npos) {
+        if (buildWord.find('?') != std::string::npos) {
           for (char letter : cheatItem.first) {
             if (count(cheatItem.first.begin(), cheatItem.first.end(), letter) >
                 count(buildWord.begin(), buildWord.end(), letter)) {
               cheatItem.first[cheatItem.first.find(letter)] = '?';
-              cout << "(" << cheatItem.first << ")";
+              std::cout << "(" << cheatItem.first << ")";
 
               break;
             }
           }
         }
 
-        cout << endl;
+        std::cout << std::endl;
       }
     }
 
-    cout << endl;
+    std::cout << std::endl;
   }
 
   return 0;

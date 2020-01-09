@@ -8,12 +8,26 @@
 
 class OneUp {
  public:
-  bool loadTiles(std::string tileFilename);
-  bool loadDictionary(std::string dictionaryFileName);
-};
+  OneUp();
+  bool loadTiles(const std::string &tileFilename);
+  bool loadDictionary(const std::string &dictionaryFileName);
+  int dictionarySize();
+  std::vector<char> getTiles();
+  std::vector<std::string> getWords();
+  char flipTile();
+  int tilesRemaining();
+  void addWord(const std::string &word);
+  void removeWord(const std::string &word);
+  std::set<std::pair<std::string, std::vector<std::string>>> getCheatWords();
+  void cheatWords(
+      size_t pos, bool valid, std::string soFar, std::vector<std::string> build,
+      std::set<std::pair<std::string, std::vector<std::string>>> &results);
 
-extern std::unordered_map<std::string, std::set<std::string>> memo;
-extern std::unordered_map<std::string, std::set<std::string>> wordMap;
-extern std::vector<std::string> currentWords;
+ private:
+  std::unordered_map<std::string, std::set<std::string>> memo;
+  std::unordered_map<std::string, std::set<std::string>> wordMap;
+  std::vector<std::string> currentWords;
+  std::vector<std::string> tiles;
+};
 
 #endif
