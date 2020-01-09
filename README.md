@@ -5,7 +5,7 @@ Offcial rules: <http://www.oneupmanship.com/images/Master%20One%20Up!%20Instruct
 Offcial tile count information: <http://www.oneupmanship.com/faq.html>
 
 # Compile
-    g++ -O2 main.cpp
+    g++ -Wall -O2 main.cpp one_up.cpp
 
 # Usage
     ./a.out dictionary_of_choice.txt
