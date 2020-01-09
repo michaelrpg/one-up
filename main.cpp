@@ -3,17 +3,15 @@
 #include <ctime>
 #include <fstream>
 #include <iostream>
-#include <map>
 #include <set>
 #include <sstream>
 #include <string>
 #include <unordered_map>
 #include <vector>
-using namespace std;
 
-unordered_map<string, set<string>> memo;
-unordered_map<string, set<string>> wordMap;
-vector<string> currentWords;
+#include "one_up.h"
+
+using namespace std;
 
 void cheatWords(size_t pos, bool valid, string soFar, vector<string> build,
                 set<pair<string, vector<string>>> &results) {
