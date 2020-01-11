@@ -80,17 +80,16 @@ int main(int argc, char *argv[]) {
       std::set<CheatResult> cheatWords = oneUp.getCheatWords();
 
       for (auto cheatItem : cheatWords) {
-        std::cout << cheatItem.word << ": ";
+        std::cout << cheatItem.word << std::endl;
 
+        std::cout << "a " << cheatItem.wordToAdd << std::endl;
+
+        std::cout << "r ";
         for (const std::string &w : cheatItem.buildList) {
           std::cout << w << " ";
         }
 
-        if (cheatItem.word != cheatItem.wordToAdd) {
-          std::cout << "(" << cheatItem.wordToAdd << ")";
-        }
-
-        std::cout << std::endl;
+        std::cout << std::endl << std::endl;
       }
     }
 
