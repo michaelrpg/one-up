@@ -80,9 +80,17 @@ char OneUp::flipTile() {
 int OneUp::tilesRemaining() { return tiles.size(); }
 
 void OneUp::addWord(const std::string &word) {
-  currentWords.push_back(word);
+  auto it = currentWords.begin();
 
-  sort(currentWords.begin(), currentWords.end());
+  while (it != currentWords.end() && word.size() > it->size()) {
+    it++;
+  }
+
+  while (it != currentWords.end() && word.size() == it->size() && word > *it) {
+    it++;
+  }
+
+  currentWords.insert(it, word);
 }
 
 void OneUp::removeWord(const std::string &word) {
