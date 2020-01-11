@@ -101,20 +101,19 @@ void OneUp::removeWord(const std::string &word) {
   }
 }
 
-std::set<std::pair<std::string, std::vector<std::string>>>
-OneUp::getCheatWords() {
+std::set<CheatResult> OneUp::getCheatWords() {
   std::string soFar;
   std::vector<std::string> build;
-  std::set<std::pair<std::string, std::vector<std::string>>> results;
+  std::set<CheatResult> results;
 
   cheatWords(0, false, soFar, build, results);
 
   return results;
 }
 
-void OneUp::cheatWords(
-    size_t pos, bool valid, std::string soFar, std::vector<std::string> build,
-    std::set<std::pair<std::string, std::vector<std::string>>> &results) {
+void OneUp::cheatWords(size_t pos, bool valid, std::string soFar,
+                       std::vector<std::string> build,
+                       std::set<CheatResult> &results) {
   if (pos >= currentWords.size()) {
     return;
   }
@@ -159,23 +158,23 @@ void OneUp::cheatWords(
   }
 }
 
-void OneUp::buildResults(
-    std::string &soFar, std::string currentWord, std::string buildWord,
-    std::vector<std::string> &build,
-    std::set<std::pair<std::string, std::vector<std::string>>> &results,
-    bool valid) {
+void OneUp::buildResults(std::string &soFar, const std::string &currentWord,
+                         const std::string &buildWord,
+                         std::vector<std::string> &build,
+                         std::set<CheatResult> &results, bool valid) {
   soFar += currentWord;
   build.push_back(buildWord);
   std::sort(soFar.begin(), soFar.end());
 
   if (valid) {
-    for (auto w : wordMap[soFar]) {
-      results.insert(make_pair(w, build));
+    for (const auto &w : wordMap[soFar]) {
+      CheatResult cheatResult{w, build, wordToAdd(w, build)};
+      results.insert(cheatResult);
     }
   }
 }
 
-void OneUp::pruneDictionary(std::string soFar, std::string oldSoFar) {
+void OneUp::pruneDictionary(std::string soFar, const std::string &oldSoFar) {
   if (memo.count(soFar) == 0) {
     for (const std::string &w : memo[oldSoFar]) {
       bool valid = true;
@@ -208,4 +207,25 @@ void OneUp::pruneDictionary(std::string soFar, std::string oldSoFar) {
       }
     }
   }
+}
+
+std::string OneUp::wordToAdd(std::string word,
+                             std::vector<std::string> buildPath) {
+  std::string buildWord;
+  for (const std::string &w : buildPath) {
+    buildWord += w;
+  }
+
+  if (buildWord.find('?') != std::string::npos) {
+    for (char letter : word) {
+      if (count(word.begin(), word.end(), letter) >
+          count(buildWord.begin(), buildWord.end(), letter)) {
+        word[word.find(letter)] = '?';
+
+        break;
+      }
+    }
+  }
+
+  return word;
 }

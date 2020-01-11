@@ -77,28 +77,17 @@ int main(int argc, char *argv[]) {
         oneUp.removeWord(word);
       }
     } else if (userInput[0] == 'c') {
-      std::set<std::pair<std::string, std::vector<std::string>>> cheatWords =
-          oneUp.getCheatWords();
+      std::set<CheatResult> cheatWords = oneUp.getCheatWords();
 
       for (auto cheatItem : cheatWords) {
-        std::cout << cheatItem.first << ": ";
+        std::cout << cheatItem.word << ": ";
 
-        std::string buildWord;
-        for (const auto &w : cheatItem.second) {
+        for (const std::string &w : cheatItem.buildList) {
           std::cout << w << " ";
-          buildWord += w;
         }
 
-        if (buildWord.find('?') != std::string::npos) {
-          for (char letter : cheatItem.first) {
-            if (count(cheatItem.first.begin(), cheatItem.first.end(), letter) >
-                count(buildWord.begin(), buildWord.end(), letter)) {
-              cheatItem.first[cheatItem.first.find(letter)] = '?';
-              std::cout << "(" << cheatItem.first << ")";
-
-              break;
-            }
-          }
+        if (cheatItem.word != cheatItem.wordToAdd) {
+          std::cout << "(" << cheatItem.wordToAdd << ")";
         }
 
         std::cout << std::endl;
