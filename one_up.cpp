@@ -128,107 +128,83 @@ void OneUp::cheatWords(
   std::string oldSoFar = soFar;
 
   size_t uppityPos = currentWords[pos].find('?');
+
   if (uppityPos == std::string::npos) {
-    soFar += currentWords[pos];
-    build.push_back(currentWords[pos]);
-    std::sort(soFar.begin(), soFar.end());
-    if (valid) {
-      for (auto w : wordMap[soFar]) {
-        results.insert(make_pair(w, build));
-      }
-    }
+    buildResults(soFar, currentWords[pos], currentWords[pos], build, results,
+                 valid);
 
-    if (memo.count(soFar) == 0) {
-      for (const std::string &w : memo[oldSoFar]) {
-        bool valid = true;
-        size_t wPos = 0;
-        size_t soFarPos = 0;
-
-        while (true) {
-          if (soFarPos >= soFar.size()) {
-            break;
-          }
-
-          if (wPos >= w.size()) {
-            valid = false;
-            break;
-          }
-
-          if (soFar[soFarPos] == w[wPos]) {
-            wPos++;
-            soFarPos++;
-          } else if (w[wPos] < soFar[soFarPos]) {
-            wPos++;
-          } else {
-            valid = false;
-            break;
-          }
-        }
-
-        if (valid) {
-          memo[soFar].insert(w);
-        }
-      }
-    }
+    pruneDictionary(soFar, oldSoFar);
 
     if (!memo[soFar].empty()) {
       cheatWords(pos + 1, valid, soFar, build, results);
     }
   } else {
-    std::string soFarOriginal = soFar;
     std::vector<std::string> buildOriginal = build;
 
     for (char letter = 'a'; letter <= 'z'; letter++) {
-      soFar = soFarOriginal;
+      soFar = oldSoFar;
       build = buildOriginal;
 
       std::string newWord = currentWords[pos];
       newWord[uppityPos] = letter;
 
-      soFar += newWord;
-      build.push_back(currentWords[pos]);
-      sort(soFar.begin(), soFar.end());
-      if (valid) {
-        for (auto w : wordMap[soFar]) {
-          results.insert(make_pair(w, build));
-        }
-      }
+      buildResults(soFar, newWord, currentWords[pos], build, results, valid);
 
-      if (memo.count(soFar) == 0) {
-        for (const std::string &w : memo[oldSoFar]) {
-          bool valid = true;
-          size_t wPos = 0;
-          size_t soFarPos = 0;
-
-          while (true) {
-            if (soFarPos >= soFar.size()) {
-              break;
-            }
-
-            if (wPos >= w.size()) {
-              valid = false;
-              break;
-            }
-
-            if (soFar[soFarPos] == w[wPos]) {
-              wPos++;
-              soFarPos++;
-            } else if (w[wPos] < soFar[soFarPos]) {
-              wPos++;
-            } else {
-              valid = false;
-              break;
-            }
-          }
-
-          if (valid) {
-            memo[soFar].insert(w);
-          }
-        }
-      }
+      pruneDictionary(soFar, oldSoFar);
 
       if (!memo[soFar].empty()) {
         cheatWords(pos + 1, valid, soFar, build, results);
+      }
+    }
+  }
+}
+
+void OneUp::buildResults(
+    std::string &soFar, std::string currentWord, std::string buildWord,
+    std::vector<std::string> &build,
+    std::set<std::pair<std::string, std::vector<std::string>>> &results,
+    bool valid) {
+  soFar += currentWord;
+  build.push_back(buildWord);
+  std::sort(soFar.begin(), soFar.end());
+
+  if (valid) {
+    for (auto w : wordMap[soFar]) {
+      results.insert(make_pair(w, build));
+    }
+  }
+}
+
+void OneUp::pruneDictionary(std::string soFar, std::string oldSoFar) {
+  if (memo.count(soFar) == 0) {
+    for (const std::string &w : memo[oldSoFar]) {
+      bool valid = true;
+      size_t wPos = 0;
+      size_t soFarPos = 0;
+
+      while (true) {
+        if (soFarPos >= soFar.size()) {
+          break;
+        }
+
+        if (wPos >= w.size()) {
+          valid = false;
+          break;
+        }
+
+        if (soFar[soFarPos] == w[wPos]) {
+          wPos++;
+          soFarPos++;
+        } else if (w[wPos] < soFar[soFarPos]) {
+          wPos++;
+        } else {
+          valid = false;
+          break;
+        }
+      }
+
+      if (valid) {
+        memo[soFar].insert(w);
       }
     }
   }

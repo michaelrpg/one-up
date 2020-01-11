@@ -24,6 +24,12 @@ class OneUp {
       std::set<std::pair<std::string, std::vector<std::string>>> &results);
 
  private:
+  void pruneDictionary(std::string soFar, std::string oldSoFar);
+  void buildResults(
+      std::string &soFar, std::string currentWord, std::string buildWord,
+      std::vector<std::string> &build,
+      std::set<std::pair<std::string, std::vector<std::string>>> &results,
+      bool valid);
   std::unordered_map<std::string, std::set<std::string>> memo;
   std::unordered_map<std::string, std::set<std::string>> wordMap;
   std::vector<std::string> currentWords;
