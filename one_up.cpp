@@ -16,14 +16,8 @@ bool OneUp::loadTiles(const std::string &tileFilename) {
     return false;
   }
 
-  while (!tileFile.eof()) {
-    std::string t;
-    tileFile >> t;
-
-    if (t.empty()) {
-      break;
-    }
-
+  char t;
+  while (tileFile >> t) {
     tiles.push_back(t);
   }
 
@@ -84,12 +78,10 @@ char OneUp::flipTile() {
   }
 
   int pos = rand() % tiles.size();
-  char tile = tiles[pos][0];
+  char tile = tiles[pos];
 
-  currentWords.push_back(tiles[pos]);
+  addWord(std::string(1, tile));
   tiles.erase(tiles.begin() + pos);
-
-  sort(currentWords.begin(), currentWords.end());
 
   return tile;
 }
