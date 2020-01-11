@@ -12,28 +12,19 @@ OneUp::OneUp() {
 bool OneUp::loadTiles(const std::string &tileFilename) {
   std::ifstream tileFile(tileFilename);
 
-  if (!tileFile.good()) {
-    return false;
-  }
-
   char t;
   while (tileFile >> t) {
     tiles.push_back(t);
   }
 
-  return true;
+  return !tiles.empty();
 }
 
 bool OneUp::loadDictionary(const std::string &dictionaryFileName) {
   std::ifstream wordListFile(dictionaryFileName);
 
-  if (!wordListFile.good()) {
-    return false;
-  }
-
-  while (!wordListFile.eof()) {
-    std::string s;
-    wordListFile >> s;
+  std::string s;
+  while (wordListFile >> s) {
     if (s.length() >= 3) {
       std::string originalWord = s;
       std::sort(s.begin(), s.end());
@@ -43,7 +34,7 @@ bool OneUp::loadDictionary(const std::string &dictionaryFileName) {
     }
   }
 
-  return true;
+  return !wordMap.empty();
 }
 
 int OneUp::dictionarySize() { return wordMap.size(); }

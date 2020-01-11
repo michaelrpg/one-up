@@ -16,12 +16,12 @@ int main(int argc, char *argv[]) {
   OneUp oneUp;
 
   if (!oneUp.loadTiles("tileCount.txt")) {
-    std::cout << "Couldn't open tileCount.txt" << std::endl;
+    std::cout << "Couldn't load tileCount.txt" << std::endl;
     return 1;
   }
 
   if (!oneUp.loadDictionary(argv[1])) {
-    std::cout << "Couldn't open dictionary" << std::endl;
+    std::cout << "Couldn't load dictionary" << std::endl;
     return 1;
   }
 
