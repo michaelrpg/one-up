@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <iostream>
+#include <map>
 #include <set>
 #include <sstream>
 #include <string>
@@ -31,6 +32,9 @@ int main(int argc, char *argv[]) {
   std::string userInput;
   std::string tempInput;
 
+  std::map<std::string, std::pair<std::string, std::vector<std::string>>>
+      actionMap;
+
   while (true) {
     std::cout << std::endl << "Letters in pile: ";
     for (const char &l : oneUp.getTiles()) {
@@ -44,8 +48,8 @@ int main(int argc, char *argv[]) {
     }
     std::cout << std::endl << std::endl;
 
-    std::cout << "Enter command (q=quit f=flip 'a X X X'=add 'r X X X'=remove "
-              << "c=cheat): ";
+    std::cout << "Enter command (q=quit f=flip c=cheat #=combo 'a X X X'=add "
+              << "'r X X X'=remove: ";
 
     std::getline(std::cin, tempInput);
     std::stringstream ssInput(tempInput);
@@ -77,20 +81,34 @@ int main(int argc, char *argv[]) {
         oneUp.removeWord(word);
       }
     } else if (userInput[0] == 'c') {
+      actionMap.clear();
       std::set<CheatResult> cheatWords = oneUp.getCheatWords();
 
       for (auto cheatItem : cheatWords) {
-        std::cout << cheatItem.word << std::endl;
+        std::cout << actionMap.size() + 1 << ". " << cheatItem.word << " ";
 
-        std::cout << "a " << cheatItem.wordToAdd << std::endl;
+        std::cout << "(" << cheatItem.wordToAdd << ") ";
 
-        std::cout << "r ";
-        for (const std::string &w : cheatItem.buildList) {
-          std::cout << w << " ";
+        std::cout << "(";
+        for (size_t pos = 0; pos < cheatItem.buildList.size(); pos++) {
+          std::cout << cheatItem.buildList[pos];
+          if (pos != cheatItem.buildList.size() - 1) {
+            std::cout << " ";
+          }
         }
+        std::cout << ")" << std::endl;
 
-        std::cout << std::endl << std::endl;
+        actionMap[std::to_string(actionMap.size() + 1)] =
+            make_pair(cheatItem.wordToAdd, cheatItem.buildList);
       }
+    } else if (actionMap.count(userInput) > 0) {
+      oneUp.addWord(actionMap[userInput].first);
+
+      for (const std::string &w : actionMap[userInput].second) {
+        oneUp.removeWord(w);
+      }
+
+      actionMap.clear();
     }
 
     std::cout << std::endl;
