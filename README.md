@@ -1,7 +1,7 @@
 # About One Up!
 One Up! is a fun tile-based word game in which you form words from tiles, including tiles owned by other players.
 
-Official rules: <http://www.oneupmanship.com/images/Master%20One%20Up!%20Instructions.pdf>  
+Official rules: <http://www.oneupmanship.com/movies/images/Master%20One%20Up!%20Instructions.pdf>  
 Official tile count information: <http://www.oneupmanship.com/faq.html>
 
 ## Compile
